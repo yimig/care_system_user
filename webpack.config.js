@@ -36,8 +36,15 @@ module.exports = {
                 test: /\.vue$/,
                 use: 'vue-loader'
             },{
-                test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/,
+                test: /\.(eot|svg|ttf|woff|woff2)$/,
                 type: 'asset',
-            },],
+            },
+            {
+                test: /\.(png|jpg|gif)$/,
+                loader: 'file-loader',
+                options: {
+                    name: 'images/[name].[ext]'
+                }
+            }],
     },
 };

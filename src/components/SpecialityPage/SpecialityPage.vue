@@ -6,8 +6,19 @@
     <div v-for="dr in speciality.doctors" class="my-8 mx-4 border border-primary rounded-xl">
       <h2 class="text-2xl text-blue mt-4 ml-4"><i class="el-icon-user-solid mr-1"></i>{{dr.name}}</h2>
       <div class="m-4">{{dr.detail}}</div>
-      <el-button type="primary" icon="el-icon-plus" class="mb-4 ml-4">立即挂号</el-button>
+      <el-button type="primary" icon="el-icon-plus" class="mb-4 ml-4" @click="dialogVisible=true">立即挂号</el-button>
     </div>
+    <el-dialog
+        title="挂号"
+        :visible.sync="dialogVisible"
+        width="90%">
+      <span>请简单描述一下您的病情：</span>
+      <textarea id="detail" class="w-full bg-blue-light rounded-md my-4"></textarea>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取消</el-button>
+    <el-button type="primary" @click="goRegister">提交</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -17,6 +28,12 @@ export default {
   props:['speciality'],
   data(){
     return{
+      dialogVisible: false
+    }
+  },
+  methods:{
+    goRegister(){
+      this.$data.dialogVisible=false;
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full w-full">
-    <el-menu class="el-menu-vertical-demo" :collapse="isCollapse" @select="handleSelect">
-      <el-menu-item index="1" class="mt-14">
+    <el-menu class="el-menu-vertical-demo relative" :collapse="isCollapse" @select="handleSelect">
+      <el-menu-item index="1">
         <i class="el-icon-house"></i>
         <span slot="title">主页</span>
       </el-menu-item>
@@ -24,14 +24,18 @@
           <el-menu-item :index="'3-'+sp.id">{{sp.name}}</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
+      <el-menu-item index="4" class="absolute bottom-0" @click="page_switch=5">
+        <i class="el-icon-user"></i>
+        <span slot="title">个人中心</span>
+      </el-menu-item>
     </el-menu>
-    <div class="flex-row flex-grow">
-      <el-menu :default-active="activeIndex" class="el-menu-demo flex-grow" mode="horizontal" @select="handleSelect">
-        <el-menu-item index="1">主页</el-menu-item>
-        <el-menu-item index="2">个人中心</el-menu-item>
-      </el-menu>
-      <SymptomPage v-show="page_switch==1" :symptom="symptom_page_item" :title="symptom_page_title"></SymptomPage>
+    <div class="flex-grow">
+      <MainPage v-show="page_switch==0" @login_action="login_action"></MainPage>
+      <SymptomPage v-show="page_switch==1" :symptom="symptom_page_item" :title="symptom_page_title" @toSpeciality="toSpeciality"></SymptomPage>
       <SpecialityPage v-show="page_switch==2" :speciality="speciality_page_item"></SpecialityPage>
+      <RegisterPage v-show="page_switch==3"></RegisterPage>
+      <LoginPage v-show="page_switch==4"></LoginPage>
+      <UserPage v-show="page_switch==5"></UserPage>
     </div>
   </div>
 </template>
@@ -40,9 +44,13 @@
 import axios from "_axios@0.21.1@axios";
 import SymptomPage from "../SymptomPage/SymptomPage.vue";
 import SpecialityPage from "../SpecialityPage/SpecialityPage.vue";
+import MainPage from "../MainPage/MainPage.vue";
+import RegisterPage from "../RegisterPage/RegisterPage.vue";
+import LoginPage from "../LoginPage/LoginPage.vue";
+import UserPage from "../UserPage/UserPage.vue";
 export default {
   name: "Window",
-  components: {SymptomPage,SpecialityPage},
+  components: {SymptomPage,SpecialityPage,MainPage,RegisterPage,LoginPage,UserPage},
   data(){
     return{
       menu_illness:[
@@ -149,8 +157,8 @@ export default {
       speciality_page_item:{},
 
       illness_menu_index:0,
-      page_switch:2,
-      isCollapse: true,
+      page_switch:0,
+      isCollapse:true,
       activeIndex: '1',
       activeIndex2: '1'
     }
@@ -179,11 +187,17 @@ export default {
     getId(key){
       return key.substring(2,3);
     },
-    getSpeciality(key){
-      let id = this.getId(key);
+    getSpeciality(id){
       for (let i = 0; i < this.menu_speciality.length; i++) {
         if(this.menu_speciality[i].id==id)return this.menu_speciality[i];
       }
+    },
+    goToSpecialityPage(id){
+      this.$data.speciality_page_item=this.getSpeciality(id);
+      this.$data.page_switch=2;
+    },
+    login_action(arg) {
+      this.$data.page_switch=arg?3:4;
     },
     getIllness(key){
       let id = this.getId(key);
@@ -192,6 +206,9 @@ export default {
           if (this.menu_illness[i].illness[j].id == id) return this.menu_illness[i].illness[j];
         }
       }
+    },
+    toSpeciality(spid){
+      this.goToSpecialityPage(spid);
     },
     handleSelect(key, keyPath) {
       console.log([key, keyPath]);
@@ -202,14 +219,17 @@ export default {
           this.$data.symptom_page_item=ill.symptom;
           this.$data.page_switch=1;
         }else if(key[0]==3){
-          this.$data.speciality_page_item=this.getSpeciality(key);
-          this.$data.page_switch=2;
+          this.goToSpecialityPage(this.getId(key));
+        }
+      }
+      else{
+        if(key==1){
+          this.$data.page_switch=0;
         }
       }
     }
   },
   computed:{
-
   }
 }
 </script>
