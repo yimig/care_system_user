@@ -24,18 +24,18 @@
           <el-menu-item :index="'3-'+sp.id">{{sp.name}}</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="4" class="absolute bottom-0" @click="page_switch=5">
+      <el-menu-item index="4" class="absolute bottom-0" @click="goToUserInfoPage">
         <i class="el-icon-user"></i>
         <span slot="title">个人中心</span>
       </el-menu-item>
     </el-menu>
     <div class="flex-grow">
-      <MainPage v-show="page_switch==0" @login_action="login_action"></MainPage>
+      <MainPage v-show="page_switch==0" @login_action="login_action" :uid="uid"></MainPage>
       <SymptomPage v-show="page_switch==1" :symptom="symptom_page_item" :title="symptom_page_title" @toSpeciality="toSpeciality"></SymptomPage>
-      <SpecialityPage v-show="page_switch==2" :speciality="speciality_page_item"></SpecialityPage>
-      <RegisterPage v-show="page_switch==3"></RegisterPage>
-      <LoginPage v-show="page_switch==4"></LoginPage>
-      <UserPage v-show="page_switch==5"></UserPage>
+      <SpecialityPage v-show="page_switch==2" :speciality="speciality_page_item" @submit="submit"></SpecialityPage>
+      <RegisterPage v-show="page_switch==3" @register_success="login_success"></RegisterPage>
+      <LoginPage v-show="page_switch==4" @login_success="login_success"></LoginPage>
+      <UserPage v-show="page_switch==5" :info="user_info" :key="user_info.uname"></UserPage>
     </div>
   </div>
 </template>
@@ -53,105 +53,8 @@ export default {
   components: {SymptomPage,SpecialityPage,MainPage,RegisterPage,LoginPage,UserPage},
   data(){
     return{
-      menu_illness:[
-        {
-          body:'头部',
-          illness: [{
-            name:'眩晕',
-            id:1,
-            symptom:[{
-              detail:'头晕与头的位置改变有关，如躺下或翻身头晕',
-              speciality:'耳鼻喉科',
-              spid:1
-            },{
-              detail:'站不稳，眼球乱转，甚至意识不清',
-              speciality:'神经内科',
-              spid:2,
-            },{
-              detail:'晕时心前区疼痛、心慌、心脏不适',
-              speciality:'心内科',
-              spid:3,
-            }]
-          },{
-            name:'头痛',
-            id:2,
-            symptom:[{
-              detail:'伴有眩晕、耳鸣，或者鼻塞、流涕',
-              speciality:'神经内科',
-              spid:2,
-            },{
-              detail:'一侧头痛，疲劳、紧张时加重',
-              speciality:'神经内科',
-              spid:2,
-            }]
-          }]
-        },
-        {
-          body:'身体',
-          illness: [{
-            name:'肚子疼',
-            id:3,
-            symptom:[{
-              detail:'右上腹和左下腹的急性腹痛',
-              speciality:'普外科',
-              doctor_name:'郭刚',
-              sid:1
-            },{
-              detail:'腹痛伴有反酸、呕吐、腹泻',
-              speciality:'消化内科',
-              spid:2,
-            }]
-          },{
-            name:'胸痛',
-            id:4,
-            symptom:[{
-              detail:'胸口或胸前疼痛，有压迫感，伴有心慌气短',
-              speciality:'心内科',
-              spid:2,
-            },{
-              detail:'因骨折等外伤所致，在进行弯腰、侧弯时疼痛加剧',
-              speciality:'骨科',
-              spid:2,
-            }]
-          }]
-        }
-      ],
-      menu_speciality:[
-        {
-          name:'耳鼻喉科',
-          id:1,
-          detail:'耳鼻喉科介绍',
-          doctors:[{
-            name:'郭刚',
-            id:1
-          },{
-            name:'刘乐',
-            id:2
-          }]
-        },{
-          name:'神经内科',
-          id:2,
-          detail:'神经内介绍',
-          doctors:[{
-            name:'郭刚',
-            id:1
-          },{
-            name:'刘乐',
-            id:2
-          }]
-        },{
-          name:'骨科',
-          id:3,
-          detail:'骨科介绍',
-          doctors:[{
-            name:'郭刚',
-            id:1
-          },{
-            name:'刘乐',
-            id:2
-          }]
-        }
-      ],
+      menu_illness:[],
+      menu_speciality:[],
       symptom_page_item:{},
       symptom_page_title:'',
       speciality_page_item:{},
@@ -160,22 +63,37 @@ export default {
       page_switch:0,
       isCollapse:true,
       activeIndex: '1',
-      activeIndex2: '1'
+      activeIndex2: '1',
+      uid:"-1",
+      user_info:{
+        uname:'',
+        birthday:''
+      }
     }
   },
   methods:{
-    'pass':function (sid){
-      this.$data.sid=sid;
+    loadIllness(){
       var __this=this;
-      axios.post('http://localhost:3000/getInfo',{
-        'sid':sid,
-        'iid':-1,
-        'content':''
-      })
+      axios.post('http://192.168.50.237:3000/getIllness',{})
           .then(function (response) {
             if(response.data.length>0){
               for (let i = 0; i < response.data.length; i++) {
-                __this.$data.info_list.push(response.data[i])
+                __this.$data.menu_illness.push(response.data[i])
+              }
+            }
+            console.log(response)
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+    },
+    loadSpeciality(){
+      var __this=this;
+      axios.post('http://192.168.50.237:3000/getSpeciality',{})
+          .then(function (response) {
+            if(response.data.length>0){
+              for (let i = 0; i < response.data.length; i++) {
+                __this.$data.menu_speciality.push(response.data[i])
               }
             }
             console.log(response)
@@ -185,7 +103,7 @@ export default {
           })
     },
     getId(key){
-      return key.substring(2,3);
+      return key.substring(2);
     },
     getSpeciality(id){
       for (let i = 0; i < this.menu_speciality.length; i++) {
@@ -195,6 +113,12 @@ export default {
     goToSpecialityPage(id){
       this.$data.speciality_page_item=this.getSpeciality(id);
       this.$data.page_switch=2;
+    },
+    goToUserInfoPage(){
+      if(this.uid>0){
+        this.updateUserInfo(this.uid);
+        this.$data.page_switch=5;
+      }
     },
     login_action(arg) {
       this.$data.page_switch=arg?3:4;
@@ -225,11 +149,61 @@ export default {
       else{
         if(key==1){
           this.$data.page_switch=0;
+        }else if(key==4){
+          this.goToUserInfoPage();
         }
+      }
+    },
+    login_success(uid){
+      this.$data.uid=uid;
+      this.$data.page_switch=0;
+    },
+    updateUserInfo(new_uid){
+      var __this=this;
+      axios.post('http://192.168.50.237:3000/getUserInfo',{uid:new_uid})
+          .then(function (response) {
+            __this.$data.user_info.avatar=response.data.avatar;
+            __this.$data.user_info.uname=response.data.uname;
+            __this.$data.user_info.nname=response.data.nname;
+            __this.$data.user_info.gender=response.data.gender;
+            __this.$data.user_info.birthday=response.data.birthday;
+            __this.$data.user_info.height=response.data.height;
+            __this.$data.user_info.weight=response.data.weight;
+            __this.$data.user_info.isAllergic=response.data.isAllergic;
+            __this.$data.user_info.phone=response.data.phone;
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+    },
+    goSubmit(msg,sid){
+      var __this=this;
+      axios.post('http://192.168.50.237:3000/addInfo',{detail:msg,sid:sid,uid:this.uid})
+          .then(function (response) {
+            if(response.data.result===1){
+              alert("挂号成功")
+            }
+            console.log(response)
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+    },
+    submit(msg,sid){
+      console.log({msg:msg,sid:sid})
+      if(this.uid>0){
+        this.goSubmit(msg,sid)
+      }else{
+        alert("请先登录");
+        this.$data.page_switch=4;
       }
     }
   },
   computed:{
+  },
+  mounted() {
+    this.loadIllness();
+    this.loadSpeciality();
   }
 }
 </script>

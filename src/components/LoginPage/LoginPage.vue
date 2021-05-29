@@ -9,18 +9,37 @@
         <div class="row_text">密码：</div>
         <el-input v-model="password" placeholder="请输入内容" class="row_input_text"></el-input>
       </div>
-      <el-button type="primary" class="my-4 mx-4">提交</el-button>
+      <el-button type="primary" class="my-4 mx-4" @click="goLogin">提交</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "_axios@0.21.1@axios";
 export default {
   name: "LoginPage",
   data(){
     return{
       uname:'',
       password:''
+    }
+  },
+  methods:{
+    goLogin(){
+      var __this=this;
+      axios.post('http://192.168.50.237:3000/login',{uname:this.uname,password:this.password})
+          .then(function (response) {
+            if(response.data.uid>0){
+              __this.$emit("login_success",response.data.uid);
+            }
+            else{
+              alert("登陆失败")
+            }
+            console.log(response)
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
     }
   }
 }

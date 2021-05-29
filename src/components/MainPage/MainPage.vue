@@ -2,9 +2,12 @@
 <div id="main" class="h-full flex flex-col justify-center items-center">
   <div id="main_title">
     <h1 class="text-bluelight text-4xl text-center my-20 mx-2">欢迎使用A医院智能分诊系统</h1>
-    <div class="flex justify-center w-full mb-10">
+    <div v-if="uid<0" class="flex justify-center w-full mb-10">
       <el-button type="primary" @click="login_action(0)">登录</el-button>
       <el-button @click="login_action(1)">注册</el-button>
+    </div>
+    <div v-else class="flex justify-center w-full mb-10 text-bluelight">
+      请点击左侧导航栏进行分诊挂号
     </div>
   </div>
 </div>
@@ -13,11 +16,13 @@
 <script>
 export default {
   name: "MainPage",
+  props:['uid'],
   methods:{
     login_action(arg){
       this.$emit('login_action',arg);
     }
   }
+
 }
 </script>
 

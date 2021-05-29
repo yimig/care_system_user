@@ -49,12 +49,13 @@
           <el-radio :label="0" class="radio">否</el-radio>
         </el-radio-group>
       </div>
-      <el-button type="primary" class="mb-4 mx-4">提交</el-button>
+      <el-button type="primary" class="mb-4 mx-4" @click="goRegister">提交</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "_axios@0.21.1@axios";
 export default {
   name: "RegisterPage",
   data(){
@@ -68,6 +69,31 @@ export default {
       weight:60,
       isAllergic:'',
       phone:''
+    }
+  },
+  methods:{
+    goRegister(){
+      var __this=this;
+      axios.post('http://192.168.50.237:3000/register',{
+        uname:this.uname,
+        password:this.password,
+        nname:this.nname,
+        gender:this.gender,
+        birthday:this.birthday,
+        height:this.height,
+        weight:this.weight,
+        allergic:this.isAllergic,
+        phone:this.phone
+      })
+          .then(function (response) {
+            if(response.data.uid>0){
+              alert("注册成功！");
+              __this.$emit("register_success",response.data.uid)
+            }
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
     }
   }
 }
