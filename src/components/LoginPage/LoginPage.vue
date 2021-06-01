@@ -7,7 +7,7 @@
       </div>
       <div class="row">
         <div class="row_text">密码：</div>
-        <el-input v-model="password" placeholder="请输入内容" class="row_input_text"></el-input>
+        <el-input v-model="password" placeholder="请输入内容" class="row_input_text" show-password></el-input>
       </div>
       <el-button type="primary" class="my-4 mx-4" @click="goLogin">提交</el-button>
     </div>
@@ -27,7 +27,7 @@ export default {
   methods:{
     goLogin(){
       var __this=this;
-      axios.post('http://192.168.50.237:3000/login',{uname:this.uname,password:this.password})
+      axios.post('/login',{uname:this.uname,password:this.password})
           .then(function (response) {
             if(response.data.uid>0){
               __this.$emit("login_success",response.data.uid);

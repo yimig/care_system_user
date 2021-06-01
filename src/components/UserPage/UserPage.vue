@@ -23,7 +23,7 @@
       </div>
       <div class="row">
         <div class="row_text">生日：</div>
-        <div class="row_content">{{info.birthday==undefined?info.birthday.substring(0,10):''}}</div>
+        <div class="row_content">{{info.birthday!=undefined?info.birthday.substring(0,10):''}}</div>
       </div>
       <div class="row">
         <div class="row_text">身高：</div>
@@ -67,9 +67,6 @@ export default {
 }
 .row_content{
   line-height: 45px;
-}
-#long_label{
-  @apply w-5/12;
 }
 .info_avatar{
   border-radius: 5rem;

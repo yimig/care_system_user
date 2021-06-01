@@ -8,12 +8,12 @@ module.exports = {
     plugins: [
         ['tailwindcss'],
         ['autoprefixer'],
-        // cssnano({
-        //     preset:'default'
-        // }),
-        // purgecss({
-        //     content:['./layouts/**/*.html', './src/**/*.vue', './src/**/*.jsx','./*.html'],
-        //     safelist:[/^el-/],
-        // }),
+        cssnano({
+            preset:'default'
+        }),
+        purgecss({
+            content:['./layouts/**/*.html', './src/**/*.vue', './src/**/*.jsx','./*.html'],
+            safelist:[/^el-/],
+        }),
     ]
 };

@@ -74,7 +74,7 @@ export default {
   methods:{
     loadIllness(){
       var __this=this;
-      axios.post('http://192.168.50.237:3000/getIllness',{})
+      axios.post('/getIllness',{})
           .then(function (response) {
             if(response.data.length>0){
               for (let i = 0; i < response.data.length; i++) {
@@ -89,7 +89,7 @@ export default {
     },
     loadSpeciality(){
       var __this=this;
-      axios.post('http://192.168.50.237:3000/getSpeciality',{})
+      axios.post('/getSpeciality',{})
           .then(function (response) {
             if(response.data.length>0){
               for (let i = 0; i < response.data.length; i++) {
@@ -160,7 +160,7 @@ export default {
     },
     updateUserInfo(new_uid){
       var __this=this;
-      axios.post('http://192.168.50.237:3000/getUserInfo',{uid:new_uid})
+      axios.post('/getUserInfo',{uid:new_uid})
           .then(function (response) {
             __this.$data.user_info.avatar=response.data.avatar;
             __this.$data.user_info.uname=response.data.uname;
@@ -178,7 +178,7 @@ export default {
     },
     goSubmit(msg,sid){
       var __this=this;
-      axios.post('http://192.168.50.237:3000/addInfo',{detail:msg,sid:sid,uid:this.uid})
+      axios.post('/addInfo',{detail:msg,sid:sid,uid:this.uid})
           .then(function (response) {
             if(response.data.result===1){
               alert("挂号成功")

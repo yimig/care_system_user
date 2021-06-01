@@ -6,7 +6,7 @@
         <el-input v-model="uname" placeholder="请输入内容" class="row_input_text"></el-input>
       </div>
       <div class="row">
-        <div class="row_text">密码：</div>
+        <div class="row_text" show-password>密码：</div>
         <el-input v-model="password" placeholder="请输入内容" class="row_input_text"></el-input>
       </div>
       <div class="row">
@@ -74,7 +74,7 @@ export default {
   methods:{
     goRegister(){
       var __this=this;
-      axios.post('http://192.168.50.237:3000/register',{
+      axios.post('/register',{
         uname:this.uname,
         password:this.password,
         nname:this.nname,
